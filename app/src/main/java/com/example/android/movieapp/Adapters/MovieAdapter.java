@@ -42,6 +42,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     public void onBindViewHolder(MovieViewHolder holder, int position) {
 
         holder.title.setText(mMovies.get(position).getTitle());
+/*        Picasso.with(mContex)
+                .load("http://image.tmdb.org/t/p/w185//" + mMovies.get(position).getPosterPath())
+                .into(holder.poster);*/
         Picasso.with(mContex)
                 .load("http://image.tmdb.org/t/p/w185//" + mMovies.get(position).getPosterPath())
                 .into(holder.poster);

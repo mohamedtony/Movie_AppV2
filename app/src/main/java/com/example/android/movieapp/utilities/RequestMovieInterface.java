@@ -20,5 +20,11 @@ public interface RequestMovieInterface {
     @GET("movie/{id}")
     Call<MovieShape> getMovieById(@Path("id") int id, @Query("api_key") String apikey);
 
+    @GET("movie/{id}/videos")
+    Call<MovieTrailerResponse> getMovieVideo(@Path("id") int id, @Query("api_key") String apikey);
+
+    @GET("movie/{movie_id}/images")
+    Call<MovieImagesResponse> getMovieImages(@Path("movie_id") int id, @Query("api_key") String apikey);
+
 
 }

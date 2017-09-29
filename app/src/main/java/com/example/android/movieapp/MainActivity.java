@@ -36,39 +36,36 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity implements CheckOnlineReceiver.MyInterFace ,MovieAdapter.OnItemClicked,LoaderManager.LoaderCallbacks<Cursor> {
+public class MainActivity extends AppCompatActivity implements CheckOnlineReceiver.MyInterFace, MovieAdapter.OnItemClicked, LoaderManager.LoaderCallbacks<Cursor> {
 
 
+    public final static String API_KEY = "f8f76039dc303e0c702a8e6423b987f3";
+    private static final String LIST_STATE_KEY = "layout";
+    private static final int TASK_LOADER_ID = 0;
+    public static String MOVIE_ID = "movie_id";
+    int finalId_ = 0;
+    ArrayList<MovieShape> movies2 = new ArrayList<>();
     private MovieAdapter movieAdapter;
     private RecyclerView mRecyclerView;
-
     private ArrayList<MovieShape> movies;
-    public final static String API_KEY="f8f76039dc303e0c702a8e6423b987f3";
     private ProgressBar progressBar;
-    private boolean isRunning=false;
-    private boolean isFinished=false;
-    int finalId_=0;
-    ArrayList<MovieShape>movies2=new ArrayList<>();
-
+    private boolean isRunning = false;
+    private boolean isFinished = false;
     private RecyclerView.LayoutManager layoutManager;
     private CheckOnlineReceiver checkOnlineReceiver;
-    private static  final String LIST_STATE_KEY="layout";
-    private Parcelable mListState ;
-    private static final int TASK_LOADER_ID = 0;
-    public static String MOVIE_ID="movie_id";
+    private Parcelable mListState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mRecyclerView=(RecyclerView)findViewById(R.id.rv_movies);
-        layoutManager=new GridLayoutManager(this,2);
+        mRecyclerView = (RecyclerView) findViewById(R.id.rv_movies);
+        layoutManager = new GridLayoutManager(this, 2);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(layoutManager);
 
-        progressBar=(ProgressBar)findViewById(R.id.pb_loading_indicator);
-
+        progressBar = (ProgressBar) findViewById(R.id.pb_loading_indicator);
 
 
         //======================= when get connected====================
@@ -76,24 +73,23 @@ public class MainActivity extends AppCompatActivity implements CheckOnlineReceiv
         checkOnlineReceiver = new CheckOnlineReceiver(this);
 
 
-        if(mListState != null) {
+        if (mListState != null) {
             Toast.makeText(this, " resotr", Toast.LENGTH_SHORT).show();
             mRecyclerView.getLayoutManager().onRestoreInstanceState(mListState);
         }
 
 
         // loadPopularMovies();
-       // getSupportLoaderManager().initLoader(TASK_LOADER_ID, null, this);
+        // getSupportLoaderManager().initLoader(TASK_LOADER_ID, null, this);
 
 
     }
 
 
-
     @Override
     protected void onResume() {
         super.onResume();
-       // getSupportLoaderManager().restartLoader(TASK_LOADER_ID, null, MainActivity.this);
+        // getSupportLoaderManager().restartLoader(TASK_LOADER_ID, null, MainActivity.this);
 
         registerReceiver(
                 checkOnlineReceiver,
@@ -116,18 +112,17 @@ public class MainActivity extends AppCompatActivity implements CheckOnlineReceiv
     }
 
 
-
     public void loadPopularMovies() {
         progressBar.setVisibility(View.VISIBLE);
-        if(movies !=null) {
+        if (movies != null) {
             movies.clear();
-            movieAdapter = new MovieAdapter(movies, MainActivity.this,MainActivity.this);
+            movieAdapter = new MovieAdapter(movies, MainActivity.this, MainActivity.this);
             mRecyclerView.setAdapter(movieAdapter);
         }
 
 
-        RequestMovieInterface requestMovieInterface= ApiRetrofitClient.getApiRetrofitClient().create(RequestMovieInterface.class);
-        Call<MovieResponse> call=requestMovieInterface.getPopularMovies(API_KEY);
+        RequestMovieInterface requestMovieInterface = ApiRetrofitClient.getApiRetrofitClient().create(RequestMovieInterface.class);
+        Call<MovieResponse> call = requestMovieInterface.getPopularMovies(API_KEY);
 
         call.enqueue(new Callback<MovieResponse>() {
             @Override
@@ -138,12 +133,12 @@ public class MainActivity extends AppCompatActivity implements CheckOnlineReceiv
                 try {
 
                     movies = new ArrayList<>(Arrays.asList(response.body().getResults()));
-                    movies2=movies;
+                    movies2 = movies;
                     movieAdapter = new MovieAdapter(movies, MainActivity.this, MainActivity.this);
                     mRecyclerView.setAdapter(movieAdapter);
                     isRunning = true;
-                }catch (Exception e){
-                    Log.d(" Error",e.getMessage().toString());
+                } catch (Exception e) {
+                    Log.d(" Error", e.getMessage().toString());
                 }
 
 
@@ -152,26 +147,26 @@ public class MainActivity extends AppCompatActivity implements CheckOnlineReceiv
             @Override
             public void onFailure(Call<MovieResponse> call, Throwable t) {
 
-                Toast.makeText(MainActivity.this, " error "+t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, " error " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
 
 
-      //  Log.i("movies2",movies2.get(1).getTitle());
-       // return movies2;
+        //  Log.i("movies2",movies2.get(1).getTitle());
+        // return movies2;
     }
 
 
     public void loadTopRatedMovies() {
         progressBar.setVisibility(View.VISIBLE);
-        if(movies !=null) {
+        if (movies != null) {
             movies.clear();
-            movieAdapter = new MovieAdapter(movies, MainActivity.this,this);
+            movieAdapter = new MovieAdapter(movies, MainActivity.this, this);
             mRecyclerView.setAdapter(movieAdapter);
         }
 
-        RequestMovieInterface requestMovieInterface= ApiRetrofitClient.getApiRetrofitClient().create(RequestMovieInterface.class);
-        Call<MovieResponse> call=requestMovieInterface.getTopRatedMovies(API_KEY);
+        RequestMovieInterface requestMovieInterface = ApiRetrofitClient.getApiRetrofitClient().create(RequestMovieInterface.class);
+        Call<MovieResponse> call = requestMovieInterface.getTopRatedMovies(API_KEY);
         call.enqueue(new Callback<MovieResponse>() {
             @Override
             public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
@@ -182,10 +177,9 @@ public class MainActivity extends AppCompatActivity implements CheckOnlineReceiv
                     movies = new ArrayList<>(Arrays.asList(response.body().getResults()));
                     movieAdapter = new MovieAdapter(movies, MainActivity.this, MainActivity.this);
                     mRecyclerView.setAdapter(movieAdapter);
-                }catch (Exception e){
-                    Log.d(" Error",e.getMessage().toString());
+                } catch (Exception e) {
+                    Log.d(" Error", e.getMessage().toString());
                 }
-
 
 
             }
@@ -193,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements CheckOnlineReceiv
             @Override
             public void onFailure(Call<MovieResponse> call, Throwable t) {
 
-                Toast.makeText(MainActivity.this, " error "+t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, " error " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
 
@@ -202,29 +196,28 @@ public class MainActivity extends AppCompatActivity implements CheckOnlineReceiv
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main,menu);
+        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        SharedPreferences preferences=getSharedPreferences("MyMovies",MODE_PRIVATE);
-        SharedPreferences.Editor editor=preferences.edit();
+        SharedPreferences preferences = getSharedPreferences("MyMovies", MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
 
 
-        if(item.getItemId()==R.id.top_rated)
-        {
-            editor.putString("movie","top_rated");
+        if (item.getItemId() == R.id.top_rated) {
+            editor.putString("movie", "top_rated");
             editor.commit();
             loadTopRatedMovies();
 
-        }else if (item.getItemId()==R.id.most_popular){
-            editor.putString("movie","most_popular");
+        } else if (item.getItemId() == R.id.most_popular) {
+            editor.putString("movie", "most_popular");
             editor.commit();
             loadPopularMovies();
-        }else if(item.getItemId()==R.id.favorite){
-            editor.putString("movie","favorite");
+        } else if (item.getItemId() == R.id.favorite) {
+            editor.putString("movie", "favorite");
             editor.commit();
             getSupportLoaderManager().restartLoader(TASK_LOADER_ID, null, MainActivity.this);
 
@@ -234,7 +227,7 @@ public class MainActivity extends AppCompatActivity implements CheckOnlineReceiv
 
     private void fetchMovieById(final ArrayList<Integer> ides) {
         //Toast.makeText(this, " hi from fetch ", Toast.LENGTH_SHORT).show();
-        movies=new ArrayList<>();
+        movies = new ArrayList<>();
 /*        progressBar.setVisibility(View.VISIBLE);
         if(movies !=null) {
             movies.clear();
@@ -242,7 +235,7 @@ public class MainActivity extends AppCompatActivity implements CheckOnlineReceiv
             mRecyclerView.setAdapter(movieAdapter);
         }*/
 
-        for (int id_1=0;id_1<ides.size();id_1++) {
+        for (int id_1 = 0; id_1 < ides.size(); id_1++) {
 
 /*            if(id_1==ides.size()-1){
                 isFinished=true;
@@ -253,45 +246,44 @@ public class MainActivity extends AppCompatActivity implements CheckOnlineReceiv
                 Log.d(" id ===> ",Integer.toString(id_1));
             }*/
             RequestMovieInterface requestMovieInterface = ApiRetrofitClient.getApiRetrofitClient().create(RequestMovieInterface.class);
-           Call<MovieShape> call = requestMovieInterface.getMovieById(ides.get(id_1), API_KEY);
-            if(id_1==ides.size()-1) {
+            Call<MovieShape> call = requestMovieInterface.getMovieById(ides.get(id_1), API_KEY);
+            if (id_1 == ides.size() - 1) {
                 finalId_ = id_1;
             }
             call.enqueue(new Callback<MovieShape>() {
-               @Override
-               public void onResponse(Call<MovieShape> call, Response<MovieShape> response) {
+                @Override
+                public void onResponse(Call<MovieShape> call, Response<MovieShape> response) {
 
 
-                   MovieShape m = response.body();
-                   movies.add(m);
+                    MovieShape m = response.body();
+                    movies.add(m);
 
 
-                  // Toast.makeText(this, " hi from fetch "+movies.get(2).getId(), Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(this, " hi from fetch "+movies.get(2).getId(), Toast.LENGTH_SHORT).show();
 /*                   if(isFinished==false) {
                        Log.d("title:===>", m.getTitle());
                    }*/
-                   if(finalId_==ides.size()-1){
-                       progressBar.setVisibility(View.INVISIBLE);
-                       Log.d("title:===>", m.getTitle());
+                 /*  if(finalId_==ides.size()-1){
+                       progressBar.setVisibility(View.INVISIBLE);*/
+                    Log.d("title:===>", m.getTitle());
 //                       Log.d("title:===> by movies", movies.get(2).getTitle());
-                       movieAdapter = new MovieAdapter(movies, MainActivity.this, MainActivity.this);
-                       mRecyclerView.setAdapter(movieAdapter);
-                       movieAdapter.notifyDataSetChanged();
-                   }
-                   // isRunning=true;
+                    movieAdapter = new MovieAdapter(movies, MainActivity.this, MainActivity.this);
+                    mRecyclerView.setAdapter(movieAdapter);
+                   movieAdapter.notifyDataSetChanged();
+                    //  }
+                    // isRunning=true;
 
-               }
+                }
 
-               @Override
-               public void onFailure(Call<MovieShape> call, Throwable t) {
-                   Toast.makeText(MainActivity.this, " Error->" + t.getMessage(), Toast.LENGTH_LONG).show();
+                @Override
+                public void onFailure(Call<MovieShape> call, Throwable t) {
+                    Toast.makeText(MainActivity.this, " Error->" + t.getMessage(), Toast.LENGTH_LONG).show();
 
-               }
-           });
-       }
+                }
+            });
+        }
 
 //        Toast.makeText(MainActivity.this, "title  "+movies.get(2).getTitle(), Toast.LENGTH_SHORT).show();
-
 
 
     }
@@ -300,20 +292,7 @@ public class MainActivity extends AppCompatActivity implements CheckOnlineReceiv
     protected void onStart() {
         super.onStart();
 
-        SharedPreferences preferences=getSharedPreferences("MyMovies", Context.MODE_PRIVATE);
-       // SharedPreferences.Editor editor=preferences.edit();
-        String s=preferences.getString("movie","");
 
-
-
-
-        if(s.equals("top_rated")){
-            loadTopRatedMovies();
-        }else if(s.equals("most_popular")){
-            loadPopularMovies();
-        }else if(s.equals("favorite")){
-            getSupportLoaderManager().initLoader(TASK_LOADER_ID, null, MainActivity.this);
-        }
 
     }
 
@@ -327,18 +306,29 @@ public class MainActivity extends AppCompatActivity implements CheckOnlineReceiv
     @Override
     public void onChanged(boolean changed) {
 
-/*        if(changed){
+    if(changed){
             if(!isRunning){
-                loadPopularMovies();
+                SharedPreferences preferences = getSharedPreferences("MyMovies", Context.MODE_PRIVATE);
+                // SharedPreferences.Editor editor=preferences.edit();
+                String s = preferences.getString("movie", "");
+
+
+                if (s.equals("top_rated")) {
+                    loadTopRatedMovies();
+                } else if (s.equals("most_popular")) {
+                    loadPopularMovies();
+                } else if (s.equals("favorite")) {
+                    getSupportLoaderManager().initLoader(TASK_LOADER_ID, null, MainActivity.this);
+                }
             }
-        }*/
+        }
 
     }
 
     @Override
     public void onItemClickedLisener(int id) {
-        Intent intent=new Intent(MainActivity.this, MovieDetail.class);
-        intent.putExtra(MOVIE_ID,id);
+        Intent intent = new Intent(MainActivity.this, MovieDetail.class);
+        intent.putExtra(MOVIE_ID, id);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
 
@@ -359,16 +349,16 @@ public class MainActivity extends AppCompatActivity implements CheckOnlineReceiv
                     // Delivers any previously loaded data immediately
                     deliverResult(mTaskData);
                 } else {*/
-                    // Force a new load
-                   if(movies!=null) {
+                // Force a new load
+/*                   if(movies!=null) {
                        movies.clear();
                        movieAdapter = new MovieAdapter(movies, MainActivity.this, MainActivity.this);
                        mRecyclerView.setAdapter(movieAdapter);
                        movieAdapter.notifyDataSetChanged();
-                   }
-                   forceLoad();
+                   }*/
+                forceLoad();
 
-               // }
+                // }
 /*                progressBar.setVisibility(View.VISIBLE);
                 if(movies!=null) {
                     movies.clear();
@@ -388,9 +378,9 @@ public class MainActivity extends AppCompatActivity implements CheckOnlineReceiv
                 // TODO (5) Query and load all task data in the background; sort by priority
                 // [Hint] use a try/catch block to catch any errors in loading data
                 try {
-                    return getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,null,
-                            null,null, MovieContract.MovieEntry.COLUMN_MOVIES_IDES);
-                }catch (Exception e){
+                    return getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI, null,
+                            null, null, MovieContract.MovieEntry.COLUMN_MOVIES_IDES);
+                } catch (Exception e) {
                     return null;
                 }
             }
@@ -408,7 +398,7 @@ public class MainActivity extends AppCompatActivity implements CheckOnlineReceiv
 /*
         Cursor cursor= getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,null,
                 null,null, MovieContract.MovieEntry._ID);*/
-        if (data != null && data.getCount()>0) {
+        if (data != null && data.getCount() > 0) {
             progressBar.setVisibility(View.INVISIBLE);
             ArrayList<Integer> ides = new ArrayList<>();
             while (data.moveToNext()) {
@@ -422,8 +412,8 @@ public class MainActivity extends AppCompatActivity implements CheckOnlineReceiv
                 fetchMovieById(ides);
             }
 
-        }else {
-            if(movies!=null) {
+        } else {
+            if (movies != null) {
                 movies.clear();
                 movieAdapter = new MovieAdapter(movies, MainActivity.this, MainActivity.this);
                 mRecyclerView.setAdapter(movieAdapter);
@@ -431,6 +421,7 @@ public class MainActivity extends AppCompatActivity implements CheckOnlineReceiv
             }
         }
     }
+
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 /*       movies.clear();

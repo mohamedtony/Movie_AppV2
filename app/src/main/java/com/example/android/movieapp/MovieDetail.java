@@ -17,9 +17,16 @@ import android.widget.Toast;
 import com.example.android.movieapp.BroadCastRecevier.CheckOnlineReceiver;
 import com.example.android.movieapp.contentprovider.MovieContract;
 import com.example.android.movieapp.utilities.ApiRetrofitClient;
+import com.example.android.movieapp.utilities.BackdropImages;
+import com.example.android.movieapp.utilities.MovieImagesResponse;
 import com.example.android.movieapp.utilities.MovieShape;
+import com.example.android.movieapp.utilities.MovieTrailer;
+import com.example.android.movieapp.utilities.MovieTrailerResponse;
+import com.example.android.movieapp.utilities.PosterImages;
 import com.example.android.movieapp.utilities.RequestMovieInterface;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -35,6 +42,9 @@ public class MovieDetail extends AppCompatActivity implements CheckOnlineReceive
     private boolean isRunning=false;
     private CheckOnlineReceiver checkOnlineReceiver;
     private ImageView imageView;
+    private ArrayList<MovieTrailer> movieTrailer;
+    private ArrayList<BackdropImages>backImages;
+    private ArrayList<PosterImages>posterImages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +53,7 @@ public class MovieDetail extends AppCompatActivity implements CheckOnlineReceive
 
 
         initViews();
+
 
 
 
@@ -233,10 +244,69 @@ public class MovieDetail extends AppCompatActivity implements CheckOnlineReceive
         if(changed){
             if(!isRunning){
                 fetchMovieById();
+                fetchMovieVideos();
+
             }
 
         }else {
             Toast.makeText(this, getString(R.string.connectivity), Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void fetchMovieVideos() {
+        RequestMovieInterface requestMovieInterface= ApiRetrofitClient.getApiRetrofitClient().create(RequestMovieInterface.class);
+        Call<MovieTrailerResponse> call=requestMovieInterface.getMovieVideo(id,MainActivity.API_KEY);
+
+        call.enqueue(new Callback<MovieTrailerResponse>() {
+            @Override
+            public void onResponse(Call<MovieTrailerResponse> call, Response<MovieTrailerResponse> response) {
+                 movieTrailer=new ArrayList<MovieTrailer>(response.body().getResults());
+                Log.e(" trailer : ",movieTrailer.get(0).getKey());
+                fetchMovieImage();
+            }
+
+            @Override
+            public void onFailure(Call<MovieTrailerResponse> call, Throwable t) {
+
+            }
+        });
+
+
+
+    }
+
+    private void fetchMovieImage() {
+      //  RequestMovieInterface requestMovieInterface= ApiRetrofitClient.getApiRetrofitClient().create(RequestMovieInterface.class);
+      //  Call<MovieTrailerResponse> call=requestMovieInterface.getMovieVideo(id,MainActivity.API_KEY);
+
+            RequestMovieInterface requestMovieInterface = ApiRetrofitClient.getApiRetrofitClient().create(RequestMovieInterface.class);
+            Call<MovieImagesResponse> call=requestMovieInterface.getMovieImages(22,MainActivity.API_KEY);
+
+            call.enqueue(new Callback<MovieImagesResponse>() {
+                @Override
+                public void onResponse(Call<MovieImagesResponse> call, Response<MovieImagesResponse> response) {
+
+                    backImages=new ArrayList<BackdropImages>(response.body().getBackdrops());
+
+                    posterImages=new ArrayList<PosterImages>(response.body().getPosters());
+
+
+
+                    Log.e("traile"," hi from response "+backImages.get(0).getFilePath());
+                    Log.e("traile"," hi from response "+posterImages.get(0).getFilePath());
+
+
+                }
+
+                @Override
+                public void onFailure(Call<MovieImagesResponse> call, Throwable t) {
+
+                    Toast.makeText(MovieDetail.this, " error "+t.getMessage(), Toast.LENGTH_LONG).show();
+
+                }
+            });
+
+        }
+
+
 }
