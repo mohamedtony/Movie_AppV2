@@ -114,7 +114,20 @@
             android:layout_below="@+id/tv_duration"
             android:layout_marginStart="18dp"
             />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/RecyclerTrailer"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:scrollbars="vertical"
+            android:layout_below="@+id/tv_overview"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="29dp">
+
+        </android.support.v7.widget.RecyclerView>
     </RelativeLayout>
+
 
 </ScrollView>
 

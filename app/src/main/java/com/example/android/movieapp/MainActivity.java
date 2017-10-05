@@ -231,7 +231,7 @@ public class MainActivity extends AppCompatActivity implements CheckOnlineReceiv
 /*        progressBar.setVisibility(View.VISIBLE);
         if(movies !=null) {
             movies.clear();
-            movieAdapter = new MovieAdapter(movies, MainActivity.this,MainActivity.this);
+            movieAdapter = new ThrailerAdapter(movies, MainActivity.this,MainActivity.this);
             mRecyclerView.setAdapter(movieAdapter);
         }*/
 
@@ -352,7 +352,7 @@ public class MainActivity extends AppCompatActivity implements CheckOnlineReceiv
                 // Force a new load
 /*                   if(movies!=null) {
                        movies.clear();
-                       movieAdapter = new MovieAdapter(movies, MainActivity.this, MainActivity.this);
+                       movieAdapter = new ThrailerAdapter(movies, MainActivity.this, MainActivity.this);
                        mRecyclerView.setAdapter(movieAdapter);
                        movieAdapter.notifyDataSetChanged();
                    }*/
@@ -362,7 +362,7 @@ public class MainActivity extends AppCompatActivity implements CheckOnlineReceiv
 /*                progressBar.setVisibility(View.VISIBLE);
                 if(movies!=null) {
                     movies.clear();
-                    movieAdapter = new MovieAdapter(movies, MainActivity.this, MainActivity.this);
+                    movieAdapter = new ThrailerAdapter(movies, MainActivity.this, MainActivity.this);
                     mRecyclerView.setAdapter(movieAdapter);
                     movieAdapter.notifyDataSetChanged();
                 }
@@ -425,7 +425,7 @@ public class MainActivity extends AppCompatActivity implements CheckOnlineReceiv
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 /*       movies.clear();
-         movieAdapter=new MovieAdapter(movies,MainActivity.this,MainActivity.this);
+         movieAdapter=new ThrailerAdapter(movies,MainActivity.this,MainActivity.this);
         mRecyclerView.setAdapter(movieAdapter);
         movieAdapter.notifyDataSetChanged();*/
     }

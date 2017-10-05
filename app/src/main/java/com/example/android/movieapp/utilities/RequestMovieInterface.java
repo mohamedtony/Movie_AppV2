@@ -23,8 +23,11 @@ public interface RequestMovieInterface {
     @GET("movie/{id}/videos")
     Call<MovieTrailerResponse> getMovieVideo(@Path("id") int id, @Query("api_key") String apikey);
 
-    @GET("movie/{movie_id}/images")
-    Call<MovieImagesResponse> getMovieImages(@Path("movie_id") int id, @Query("api_key") String apikey);
+    @GET("movie/{id}/images")
+    Call<MovieImagesResponse> getMovieImages(@Path("id") int id, @Query("api_key") String apikey);
+
+    @GET("movie/{id}/reviews")
+    Call<MovieReviewResponse> getMovieReviews(@Path("id") int id, @Query("api_key") String apikey);
 
 
 }

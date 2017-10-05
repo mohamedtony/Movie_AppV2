@@ -7,6 +7,8 @@ import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -14,11 +16,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.movieapp.Adapters.ThrailerAdapter;
 import com.example.android.movieapp.BroadCastRecevier.CheckOnlineReceiver;
 import com.example.android.movieapp.contentprovider.MovieContract;
 import com.example.android.movieapp.utilities.ApiRetrofitClient;
 import com.example.android.movieapp.utilities.BackdropImages;
 import com.example.android.movieapp.utilities.MovieImagesResponse;
+import com.example.android.movieapp.utilities.MovieReview;
+import com.example.android.movieapp.utilities.MovieReviewResponse;
 import com.example.android.movieapp.utilities.MovieShape;
 import com.example.android.movieapp.utilities.MovieTrailer;
 import com.example.android.movieapp.utilities.MovieTrailerResponse;
@@ -45,6 +50,11 @@ public class MovieDetail extends AppCompatActivity implements CheckOnlineReceive
     private ArrayList<MovieTrailer> movieTrailer;
     private ArrayList<BackdropImages>backImages;
     private ArrayList<PosterImages>posterImages;
+    private ArrayList<MovieReview> movieReviews;
+
+    private RecyclerView mRecyclerView;
+private ThrailerAdapter thrailerAdapter;
+    private RecyclerView.LayoutManager layoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +87,13 @@ public class MovieDetail extends AppCompatActivity implements CheckOnlineReceive
         // fetchMovieById();
 
         checkOnlineReceiver=new CheckOnlineReceiver(this);
+
+
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.RecyclerTrailer);
+        layoutManager = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(layoutManager);
 
 
         imageView.setOnClickListener(new View.OnClickListener() {
@@ -245,12 +262,37 @@ public class MovieDetail extends AppCompatActivity implements CheckOnlineReceive
             if(!isRunning){
                 fetchMovieById();
                 fetchMovieVideos();
+                fetchMovieReview();
 
             }
 
         }else {
             Toast.makeText(this, getString(R.string.connectivity), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void fetchMovieReview() {
+
+        RequestMovieInterface requestMovieInterface=ApiRetrofitClient.getApiRetrofitClient().create(RequestMovieInterface.class);
+        Call<MovieReviewResponse> call=requestMovieInterface.getMovieReviews(id,MainActivity.API_KEY);
+        call.enqueue(new Callback<MovieReviewResponse>() {
+            @Override
+            public void onResponse(Call<MovieReviewResponse> call, Response<MovieReviewResponse> response) {
+
+                movieReviews=new ArrayList<MovieReview>(response.body().getResults());
+                if(movieReviews!=null) {
+               //     Log.e(" author ",movieReviews.get(0).getAuthor()+"\n"+movieReviews.get(0).getContent());
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<MovieReviewResponse> call, Throwable t) {
+
+            }
+        });
+
+
     }
 
     private void fetchMovieVideos() {
@@ -280,7 +322,7 @@ public class MovieDetail extends AppCompatActivity implements CheckOnlineReceive
       //  Call<MovieTrailerResponse> call=requestMovieInterface.getMovieVideo(id,MainActivity.API_KEY);
 
             RequestMovieInterface requestMovieInterface = ApiRetrofitClient.getApiRetrofitClient().create(RequestMovieInterface.class);
-            Call<MovieImagesResponse> call=requestMovieInterface.getMovieImages(22,MainActivity.API_KEY);
+            Call<MovieImagesResponse> call=requestMovieInterface.getMovieImages(id,MainActivity.API_KEY);
 
             call.enqueue(new Callback<MovieImagesResponse>() {
                 @Override
@@ -294,6 +336,9 @@ public class MovieDetail extends AppCompatActivity implements CheckOnlineReceive
 
                     Log.e("traile"," hi from response "+backImages.get(0).getFilePath());
                     Log.e("traile"," hi from response "+posterImages.get(0).getFilePath());
+
+                    thrailerAdapter=new ThrailerAdapter(movieTrailer,backImages,MovieDetail.this);
+                    mRecyclerView.setAdapter(thrailerAdapter);
 
 
                 }
